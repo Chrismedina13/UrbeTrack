@@ -24,7 +24,7 @@ namespace NetChallenge.Domain.Booking
 
         private static void Validate(TimeSpan value)
         {
-            if (value.TotalMinutes > 0)
+            if (value.TotalMinutes <=  0)
                 throw new BookingDurationGreaterThanZero("El tiempo reservado debe ser mayor a 0");
 
         }

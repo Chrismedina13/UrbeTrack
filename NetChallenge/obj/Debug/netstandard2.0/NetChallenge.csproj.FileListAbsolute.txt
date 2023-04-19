@@ -1,4 +1,3 @@
-C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.csproj.AssemblyReference.cache
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.AssemblyInfoInputs.cache
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.AssemblyInfo.cs
@@ -8,3 +7,4 @@ C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\bin\Debug\netstandard
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\bin\Debug\netstandard2.0\NetChallenge.pdb
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.dll
 C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.pdb
+C:\Users\NB64\Desktop\UT Project\NetChallenge\NetChallenge\obj\Debug\netstandard2.0\NetChallenge.csproj.AssemblyReference.cache
