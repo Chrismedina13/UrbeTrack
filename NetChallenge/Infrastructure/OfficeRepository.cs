@@ -7,14 +7,16 @@ namespace NetChallenge.Infrastructure
 {
     public class OfficeRepository : IOfficeRepository
     {
+        private List<Office> officeList = new List<Office>();
+
         public IEnumerable<Office> AsEnumerable()
         {
-            throw new System.NotImplementedException();
+            return officeList;
         }
 
         public void Add(Office item)
         {
-            throw new System.NotImplementedException();
+            officeList.Add(item);
         }
     }
 }

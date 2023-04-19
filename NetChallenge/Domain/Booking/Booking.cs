@@ -11,9 +11,18 @@ namespace NetChallenge.Domain.Booking
 
         public BookingDatetime BookingDatetime { get; private set; }
 
+        public BookingDuration BookingDuration { get; private set; }
+
         public UserName UserName { get; private set; }
 
-
+        public Booking(LocationName locationName, OfficeName officeName, BookingDatetime bookingDatetime, BookingDuration bookingDuration, UserName userName )
+        {
+            LocationName = locationName;
+            OfficeName = officeName;
+            BookingDatetime = bookingDatetime;
+            BookingDuration = bookingDuration;
+            UserName = userName;
+        }
 
         public void SetLocationName(LocationName name)
         {

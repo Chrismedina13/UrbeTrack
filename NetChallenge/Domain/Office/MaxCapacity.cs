@@ -25,7 +25,7 @@ namespace NetChallenge.Domain.Office
         private static void Validate(int value)
         {
             if (value <= 0 )
-                throw new CapacityGreaterThanZero("La capacidad maxima debe ser mayor a 0");
+                throw new CapacityGreaterThanZero("La capacidad maxima debe ser mayor a 0. Capacidad ingresada: " + value.ToString());
 
         }
     }

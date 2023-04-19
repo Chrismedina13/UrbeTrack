@@ -5,9 +5,12 @@ namespace NetChallenge.Domain.Office
 {
     public class Office
     {
-        public Office()
+        public Office(LocationName location, OfficeName officeName, MaxCapacity maxCapacity, List<AvailableResource> availableResources)
         {
-
+            LocationName = location;
+            OfficeName = officeName;
+            MaxCapacity = maxCapacity;
+            AvailableResource = availableResources;
         }
 
         public LocationName LocationName { get; private set; }
@@ -17,6 +20,7 @@ namespace NetChallenge.Domain.Office
         public MaxCapacity MaxCapacity { get; private set; }
 
         public List<AvailableResource> AvailableResource { get; private set; }
+
 
         public void SetLocationName(LocationName name)
         {
