@@ -49,7 +49,7 @@ namespace NetChallenge
 
         public void BookOffice(BookOfficeRequest request)
         {
-            if (ValidateOfficeInBooking(request.LocationName, request.OfficeName)) { 
+            if (ValidateOfficeInBooking(request.LocationName, request.OfficeName) && ValidateOverlaping(request.LocationName, request.OfficeName, request.DateTime, request.Duration)) { 
             
                 Booking booking = new Booking(LocationName.Create(request.LocationName), OfficeName.Create(request.OfficeName), BookingDatetime.Create(request.DateTime), BookingDuration.Create(request.Duration), UserName.Create(request.UserName));
                 _bookingRepository.Add(booking);       
@@ -88,13 +88,19 @@ namespace NetChallenge
 
         public IEnumerable<OfficeDto> GetOfficeSuggestions(SuggestionsRequest request)
         {
-            throw new NotImplementedException();
+            List<Office> offices = new List<Office>();
+            offices = _officeRepository.AsEnumerable().ToList();
+
+            if (offices.Count() > 0)
+                return GetOfficeSuggestions(offices,request).Select(x => new OfficeDto() { LocationName = x.LocationName.Value, Name = x.OfficeName.Value, MaxCapacity = x.MaxCapacity.Value, AvailableResources = x.AvailableResource.Select(y => y.Value).ToArray() }); 
+            else
+                return new List<OfficeDto>();
+
         }
 
-
-
         #region Private Methods
-        
+
+        #region Location
         private bool ValidateLocation(string localName)
         {
             List<LocationDto> locations = new List<LocationDto>();
@@ -103,8 +109,10 @@ namespace NetChallenge
                 throw new LocalNonExists("Locación invalido: La locación " + localName.ToUpper() + " ingresado no esta dado de alta");
 
             return true;
-        }
+        } 
+        #endregion
 
+        #region Office
         private bool ValidateOfficeInLocation(string locationName, string officeName)
         {
             List<OfficeDto> offices = new List<OfficeDto>();
@@ -113,7 +121,10 @@ namespace NetChallenge
                 throw new ExistingOfficeInLocality("Oficina invalida: La nombre de oficina " + officeName.ToUpper() + " ya existe en el locación " + locationName.ToUpper());
 
             return true;
-        }
+        } 
+        #endregion
+
+        #region Booking
 
         private bool ValidateOfficeInBooking(string locationName, string officeName) 
         {
@@ -126,6 +137,69 @@ namespace NetChallenge
 
             return true;
         }
+
+        
+        private bool ValidateOverlaping(string locationName, string officeName, DateTime dateTime, TimeSpan duration)
+        {
+            var bookings = GetBookings(locationName, officeName);
+            if (bookings.Any(x => OverlapingDatetime(x.DateTime, x.DateTime.AddMinutes(x.Duration.TotalMinutes), dateTime, dateTime.AddMinutes(duration.TotalMinutes))))
+                return false;
+            else
+                return true;
+        }
+
+        private bool OverlapingDatetime(DateTime starTime1, DateTime endTime1, DateTime starTime2, DateTime endTime2)
+        {
+            if ((starTime1 <= endTime2) && (endTime1 >= starTime2))
+            {
+                if ((starTime1 != endTime2 && endTime1 != starTime2))
+                    throw new OverlapingDatetime("Reserva invalida: Ya existe una reserva desde el " + starTime1.ToString() + " hasta el " + endTime1.ToString());
+
+            }
+            return false;
+        } 
+        #endregion
+
+        #region Suggestions
+        private IEnumerable<Office> GetOfficeSuggestions(List<Office> offices, SuggestionsRequest request)
+        {
+            List<Office> officesPreferedNeigborHood = new List<Office>();
+            List<Office> officeResult = new List<Office>();
+
+            List<Office> officesSuggestionObligatory = GetOfficesSuggestionObligatory(offices, request.CapacityNeeded, request.ResourcesNeeded.ToList());
+
+            if (officesSuggestionObligatory.Count > 0)
+            {
+                officesPreferedNeigborHood = officesSuggestionObligatory.Where(x => OfficeInPreferedNeigborHood(x.LocationName.Value, request.PreferedNeigborHood)).ToList();
+
+                if (officesPreferedNeigborHood.Count() == 0)
+                    officeResult = officesSuggestionObligatory.ToList();
+                else
+                    officeResult = officesPreferedNeigborHood.ToList();
+            }
+
+            return officeResult.OrderBy(x => x.MaxCapacity.Value).ThenBy(x => x.AvailableResource.Count).ToList();
+        }
+
+        private bool OfficeInPreferedNeigborHood(string locationName, string preferedNeigborHood)
+        {
+            List<LocationDto> locations = GetLocations().ToList();
+
+            return locations.Exists(x => x.Name == locationName && x.Neighborhood == preferedNeigborHood);
+        }
+
+        private List<Office> GetOfficesSuggestionObligatory(List<Office> offices, int capacityNeeded, List<string> resourcesNeeded)
+        {
+            List<Office> officesRequiredCapacity = new List<Office>();
+            List<Office> officesRequiredResources = new List<Office>();
+
+            officesRequiredCapacity = offices.Where(x => x.MaxCapacity.Value >= capacityNeeded).ToList();
+            if (officesRequiredCapacity.Count() > 0 && resourcesNeeded.Count() > 0)
+                return officesRequiredCapacity.Where(x => x.AvailableResource.All(y => resourcesNeeded.Contains(y.Value))).ToList();
+
+            return officesRequiredCapacity;
+        } 
+        #endregion
 
         #endregion
     }
